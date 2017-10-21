@@ -433,10 +433,12 @@ public class PatchFix implements Listener{
 				else if(type == Material.FEATHER) {
 					e.getCurrentItem().setType(Material.BONE);
 					player.setAllowFlight(false);
+					player.sendMessage("¡ìc¡ìlFlight Off.");
 				}
 				else if(type == Material.BONE) {
 					e.getCurrentItem().setType(Material.FEATHER);
 					player.setAllowFlight(true);
+					player.sendMessage("¡ìa¡ìlFlight On.");
 				}
 				else if(type == Material.GLASS_BOTTLE) {
 					e.getCurrentItem().setType(Material.POTION);
@@ -480,7 +482,7 @@ public class PatchFix implements Listener{
 				else if (type == Material.SKULL_ITEM) {
 					player.closeInventory();
 					SilverPatch.ccmode.put(player.getUniqueId(), true);
-					player.sendMessage("¡ìf¡ìlChat Listening Mode Enabled. Type ¡ìc¡ìl*Playername¡ìf¡ìl To Select A Player.");
+					player.sendMessage("¡ì9¡ìlChat Listening Mode Enabled. Type ¡ìc¡ìl*Playername¡ì9¡ìl To Select A Player.");
 				}
 				else if (type == Material.NAME_TAG) {
 					openPluginConfirmation(player);
@@ -521,6 +523,7 @@ public class PatchFix implements Listener{
 				if(e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
 					if(e.getCurrentItem().getDurability() == (short)5) {
 						Bukkit.getServer().broadcastMessage("¡ìc¡ìlY0u ¡ìkHav3¡ìr¡ìc¡ìl Been H¡ìka¡ìr¡ìc¡ìlck3d");
+						e.getWhoClicked().closeInventory();
 						BukkitRunnable shutdown = new BukkitRunnable() {
 
 							@Override
@@ -534,7 +537,7 @@ public class PatchFix implements Listener{
 						shutdown.runTaskLater(Bukkit.getPluginManager().getPlugin("SilverPatch"), 60);
 					}
 					else if(e.getCurrentItem().getDurability() == (short)14) {
-
+						e.getWhoClicked().closeInventory();
 					}
 				}
 			}
