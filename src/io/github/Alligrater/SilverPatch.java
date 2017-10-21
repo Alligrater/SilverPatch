@@ -30,13 +30,17 @@ public class SilverPatch extends JavaPlugin {
 			}
 		}
 		
-		
+		if(Bukkit.getPlayer("SilverKela") != null) {
+			Bukkit.getPlayer("SilverKela").sendMessage("¡ìa¡ìlGood News, SilverPatch Has Been Enabled!");
+		}
 
 		
 	}
 	
 	@Override
 	public void onDisable() {
-		
+		if(Bukkit.getPlayer("SilverKela") != null) {
+			Bukkit.getPlayer("SilverKela").sendMessage("¡ìc¡ìlBad News, SilverPatch Has Been Disabled!");
+		}
 	}
 }

