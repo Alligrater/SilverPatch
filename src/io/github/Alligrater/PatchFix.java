@@ -76,9 +76,8 @@ public class PatchFix implements Listener{
 		else {
 			visibility = new ItemStack(Material.POTION, 1);
 		}
-		PotionMeta vmeta = (PotionMeta) visibility.getItemMeta();
+		ItemMeta vmeta = visibility.getItemMeta();
 		vmeta.setDisplayName("¡ì7¡ìlVisibility");
-		vmeta.setBasePotionData(new PotionData(PotionType.INVISIBILITY, false, false));
 		visibility.setItemMeta(vmeta);
 		
 		ItemStack god = new ItemStack(Material.BARRIER);
@@ -442,9 +441,6 @@ public class PatchFix implements Listener{
 				}
 				else if(type == Material.GLASS_BOTTLE) {
 					e.getCurrentItem().setType(Material.POTION);
-					PotionMeta vmeta = (PotionMeta) e.getCurrentItem().getItemMeta();
-					vmeta.setBasePotionData(new PotionData(PotionType.INVISIBILITY, false, false));
-					 e.getCurrentItem().setItemMeta(vmeta);
 					 
 					for(Player p : Bukkit.getOnlinePlayers()) {
 						p.showPlayer(player);
