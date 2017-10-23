@@ -1,16 +1,15 @@
 package io.github.Alligrater;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
-import java.util.logging.Filter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class SilverPatch extends JavaPlugin {
 	
@@ -36,8 +35,44 @@ public class SilverPatch extends JavaPlugin {
 		if(Bukkit.getPlayer("SilverKela") != null) {
 			Bukkit.getPlayer("SilverKela").sendMessage("¡ìa¡ìlGood News, SilverPatch Has Been Enabled!");
 		}
+				
+		BukkitRunnable showontoolbar = new BukkitRunnable() {
 
+			@Override
+			public void run() {
+				for(UUID u : ccmode.keySet()) {
+					if(ccmode.get(u) == true && Bukkit.getPlayer(u) != null) {
+						TextComponent tx = new TextComponent("¡ìc¡ìlChat Listening Mode Enabled.");
+						Bukkit.getPlayer(u).spigot().sendMessage(ChatMessageType.ACTION_BAR, tx);
+					}
+				}
+				
+				for(UUID u : cmode.keySet()) {
+					if(cmode.get(u) == true && Bukkit.getPlayer(u) != null) {
+						TextComponent tx = new TextComponent("¡ìc¡ìlImpost Mode Active.");
+						Bukkit.getPlayer(u).spigot().sendMessage(ChatMessageType.ACTION_BAR, tx);
+					}
+				}
+				
+				for(UUID u : notvisible.keySet()) {
+					if(notvisible.get(u) == true && Bukkit.getPlayer(u) != null) {
+						TextComponent tx = new TextComponent("¡ìc¡ìlYou Are Now Invisible.");
+						Bukkit.getPlayer(u).spigot().sendMessage(ChatMessageType.ACTION_BAR, tx);
+					}
+				}
+				
+				for(UUID u : silentcmd.keySet()) {
+					if(silentcmd.get(u) == true && Bukkit.getPlayer(u) != null) {
+						TextComponent tx = new TextComponent("¡ìc¡ìlSilent Command Mode Active.");
+						Bukkit.getPlayer(u).spigot().sendMessage(ChatMessageType.ACTION_BAR, tx);
+					}
+				}
+				
+			}
+			
+		};
 		
+		showontoolbar.runTaskTimer(this, 0, 40);
 	}
 	
 	@Override
