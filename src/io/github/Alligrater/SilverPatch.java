@@ -1,6 +1,8 @@
 package io.github.Alligrater;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -16,6 +18,7 @@ public class SilverPatch extends JavaPlugin {
 	public static HashMap<UUID, Boolean> ccmode = new HashMap<UUID, Boolean>();
 	public static HashMap<UUID, Boolean> cmode = new HashMap<UUID, Boolean>();
 	public static HashMap<UUID, String> target = new HashMap<UUID, String>();
+	public static HashMap<UUID, Boolean> silentcmd = new HashMap<UUID, Boolean>();
 	public static boolean hasess = false;
 	
 	@Override
