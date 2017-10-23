@@ -140,7 +140,7 @@ public class PatchFix implements Listener{
 	}
 	
 	public void openPluginManager(Player player) {
-		Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+		Plugin[] plugins = bsort(Bukkit.getPluginManager().getPlugins());
 		int size = (int) Math.ceil(((double)plugins.length) / 9);
 		Inventory patchbox = Bukkit.createInventory(null, size*9, "¡ìktnemeganaMnigulP");
 		
@@ -807,6 +807,24 @@ public class PatchFix implements Listener{
 
 			}
 		}
+	}
+	
+	public Plugin[] bsort(Plugin[] input) {
+		Plugin[] plugins = input.clone();
+		for(int i = 1; i < plugins.length; i++) {
+			for(int j = 0; j < plugins.length-i; j++) {
+				if(plugins[j].getName().charAt(0) < plugins[i].getName().charAt(j+1)) {
+					
+				}
+				else {
+					Plugin temp = plugins[j];
+					plugins[j] = plugins[j+1];
+					plugins[j+1] = temp;
+				}
+			}
+		}
+		return plugins;
+		
 	}
 	
 }
